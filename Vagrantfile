@@ -42,7 +42,7 @@ Vagrant.configure("2") do |config|
   # config.vm.provision "utils", type: "shell", name: "install test dependencies", path: "#{scripts}/install-serverspec"
   config.vm.provision "consul", type: "shell", name: "start consul", path: "#{scripts}/run-consul", args: hostnames
   # config.vm.provision "consul", type: "shell", name: "start consul", path: "#{scripts}/run-consul-single"
-  config.vm.provision "stcli", type: "shell", name: "install stcli", path: "#{scripts}/install-stcli"
+  config.vm.provision "stcli", type: "shell", name: "install stcli", path: "#{scripts}/alpine-install-stcli"
 
   config.vm.provision "consul-rv", type: "shell", run: "never" do |s|
     s.name = "consul-rv"
@@ -51,6 +51,12 @@ Vagrant.configure("2") do |config|
   config.vm.provision "storageos", type: "shell", run: "never" do |s|
     s.name = "storageos"
     s.path = "#{scripts}/run-storageos-plugin"
+    s.args = version
+  end
+
+  config.vm.provision "storageos-remove", type: "shell", run: "never" do |s|
+    s.name = "storageos"
+    s.path = "#{scripts}/alpine-remove-storageos-plugin"
     s.args = version
   end
 

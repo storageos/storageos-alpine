@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Thoroughly remove the StorageOS plugin.
+
+set -e -u
+
+docker plugin rm -f storageos
+service docker restart

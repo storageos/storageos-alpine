@@ -5,7 +5,6 @@ set -e
 # num_nodes=1
 
 # hostname=$(hostname)
-apk add perl
 ip=$(avahi-resolve-host-name -4 "$(hostname -s).local" | cut -f2)
 
 
