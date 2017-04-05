@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+# Fix up malfunctioning DHCP. I'm not sure what causes this tbh, but
+# installing dhcpcd fixes it. Of course that's a bit of a problem,
+# because that means we have to have enough working networking to
+# download and install dhcpcd.
+
+# Only do this if the file is empty (test -s).
+if [ ! -s /etc/resolv.conf ]; then
+    echo "Fixing broken resolv.conf"
+    cat <<EOF >/etc/resolv.conf
+nameserver 8.8.8.8
+EOF
+
+    apk add -U dhcpcd
+    service networking restart
+fi
+
+echo "Updating apk cache"
+apk add -U

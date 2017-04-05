@@ -32,7 +32,7 @@ $tail
 EOF
 
 # Install mDNS and avahi.
-apk add -U avahi avahi-compat-libdns_sd dbus
+apk add avahi avahi-compat-libdns_sd avahi-tools dbus
 rc-update add avahi-daemon
 rc-service -N avahi-daemon start
 

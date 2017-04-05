@@ -5,12 +5,11 @@ set -e
 cluster_hostnames=("$@")
 num_nodes=${#cluster_hostnames[@]}
 
-hostname=$(hostname)
-ip=$(getent hosts "${hostname}.local" | awk '{print $1}')
+apk add perl
+ip=$(avahi-resolve-host-name -4 "$(hostname -s).local" | cut -f2)
+leader_ip=$(avahi-resolve-host-name -4 "${cluster_hostnames[0]}.local" | cut -f2)
 
-leader_ip=$(getent hosts "${cluster_hostnames[0]}.local" | awk '{print $1}')
-
-echo "starting consul on $ip with $num_nodes nodes, leader on $leader_ip"
+echo "Starting consul on $ip with $num_nodes nodes, leader on $leader_ip"
 docker rm -f consul 2>&1 || true
 docker pull consul |cat
 docker run -d --name consul --net=host consul agent -server \
@@ -18,3 +17,8 @@ docker run -d --name consul --net=host consul agent -server \
 -client=0.0.0.0 \
 -bootstrap-expect="${num_nodes}" \
 -retry-join="${leader_ip}"
+
+sleep 2
+echo "Querying local consul agent"
+docker exec consul consul info | egrep 'version ='
+docker exec consul consul info | egrep 'leader'

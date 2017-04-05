@@ -5,7 +5,7 @@ set -e
 # num_nodes=1
 
 # hostname=$(hostname)
-apk add -U perl
+apk add perl
 default_int=$(ip -4 route list 0/0 | perl -ne 'print "$1\n" if m/dev (\w+)\s*/;')
 ip=$(ip -4 a show dev "$default_int" | perl -ne 'print "$1\n" if m!^\s+inet ([^/]+)/(\d+) (?:brd|scope)!;')
 # ip=$(getent hosts "${hostname}.local" | awk '{print $1}')

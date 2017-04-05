@@ -5,8 +5,7 @@ set -e -u
 docker pull andrelucas/stcli:latest |cat
 
 sudo apk add perl
-default_int=$(ip -4 route list 0/0 | perl -ne 'print "$1\n" if m/dev (\w+)\s*/;')
-ip=$(ip -4 a show dev "$default_int" | perl -ne 'print "$1\n" if m!^\s+inet ([^/]+)/(\d+) (brd|scope)!;')
+ip=$(avahi-resolve-host-name -4 "$(hostname -s).local" | cut -f2)
 
 stbin=/usr/local/bin/stcli
 cat <<EOF >$stbin
