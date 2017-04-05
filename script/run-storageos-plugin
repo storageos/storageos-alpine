@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+if [ -z "$1" ]; then
+	version=latest
+else
+	version="$1"
+	shift
+fi
+
+plugin=storageos/plugin
+default_int=$(ip -4 route list 0/0 | perl -ne 'print "$1\n" if m/dev (\w+)\s*/;')
+ip=$(ip -4 a show dev "$default_int" | perl -ne 'print "$1\n" if m!^\s+inet ([^/]+)/(\d+) (?:brd|scope)!;')
+
+# Don't recreate dir if it exists.  Consul will still have old id registered so
+# it needs to re-use same config for each run.
+# shellcheck disable=SC2043
+for dir in /var/lib/storageos; do
+  [ -d $dir ] || mkdir $dir
+done
+
+# TODO: Move this to controlplane startup
+modprobe nbd
+modprobe fuse
+
+echo "starting storageos plugin on $ip"
+docker plugin rm -f storageos 2>/dev/null || true
+docker plugin install --alias storageos --grant-all-permissions "$plugin:$version" ADVERTISE_IP="${ip}" KV_ADDR="${ip}"

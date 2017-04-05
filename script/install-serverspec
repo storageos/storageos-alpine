@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+# Install tools for sepc tests.
+if [ ! -f /usr/bin/jq ]; then
+  apk add -U jq
+fi
+if [ ! -f /usr/bin/http ]; then
+  apk add -U python py-pip
+  pip install --upgrade --disable-pip-version-check httpie
+fi

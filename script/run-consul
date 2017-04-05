@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e
+
+cluster_hostnames=("$@")
+num_nodes=${#cluster_hostnames[@]}
+
+hostname=$(hostname)
+ip=$(getent hosts "${hostname}.local" | awk '{print $1}')
+
+leader_ip=$(getent hosts "${cluster_hostnames[0]}.local" | awk '{print $1}')
+
+echo "starting consul on $ip with $num_nodes nodes, leader on $leader_ip"
+docker rm -f consul 2>&1 || true
+docker pull consul |cat
+docker run -d --name consul --net=host consul agent -server \
+-bind="${ip}" \
+-client=0.0.0.0 \
+-bootstrap-expect="${num_nodes}" \
+-retry-join="${leader_ip}"

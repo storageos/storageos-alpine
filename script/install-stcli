@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e -u
+
+docker pull andrelucas/stcli:latest |cat
+
+sudo apk add perl
+default_int=$(ip -4 route list 0/0 | perl -ne 'print "$1\n" if m/dev (\w+)\s*/;')
+ip=$(ip -4 a show dev "$default_int" | perl -ne 'print "$1\n" if m!^\s+inet ([^/]+)/(\d+) (brd|scope)!;')
+
+stbin=/usr/local/bin/stcli
+cat <<EOF >$stbin
+#!/bin/bash
+user=${STORAGEOS_USERNAME:-storageos}
+pass=${STORAGEOS_PASSWORD:-storageos}
+host="$ip"
+exec docker run -ti andrelucas/stcli:latest -u \$user -p \$pass -H \$host \$*
+EOF
+chown root:root $stbin
+chmod 0755 $stbin

@@ -1,0 +1,54 @@
+#!/bin/bash
+
+set -e
+
+if [ -z "$1" ]; then
+	version=latest
+else
+	version="$1"
+	shift
+fi
+
+imgname=storageos/node
+hostname=$(hostname)
+ip=$(getent hosts "${hostname}.local" | awk '{print $1}')
+
+# Don't recreate dir if it exists.  Consul will still have old id registered so
+# it needs to re-use same config for each run.
+for dir in /var/lib/storageos /etc/docker/plugins; do
+  [ -d $dir ] || mkdir $dir
+done
+
+cat <<-PLUGIN  > /etc/docker/plugins/storageos.json
+  {
+    "Name": "storageos",
+    "Addr": "unix:///run/docker/plugins/storageos.sock"
+  }
+PLUGIN
+
+if [ -f imageid-imagefile ] && [ -f imageid-uuid ]; then
+	echo "Removing any existing $imgname:$version container."
+	docker rmi -f "$imgname:$version" || true
+	echo "Loading storageos container from $(cat imageid-imagefile)"
+	gzip -cd "$(cat imageid-imagefile)" | docker load
+	echo "Tagging $imgname:uuid-$(cat imageid-uuid) as $imgname:$version"
+	docker tag "$imgname:uuid-$(cat imageid-uuid)" "$imgname:$version"
+fi
+
+# TODO: Move this to controlplane startup
+modprobe nbd
+modprobe fuse
+
+echo "starting storageos on $ip"
+docker rm -f storageos 2>/dev/null || true
+docker run -d --name storageos \
+	-e HOSTNAME \
+	-e ADVERTISE_IP="${ip}" \
+	--net=host \
+	--pid=host \
+	--privileged \
+	--cap-add SYS_ADMIN \
+  	--device /dev/fuse \
+	-v /var/lib/storageos:/var/lib/storageos:rshared \
+	-v /run/docker/plugins:/run/docker/plugins \
+	"$imgname:$version" server

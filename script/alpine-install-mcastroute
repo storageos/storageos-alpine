@@ -1,0 +1,47 @@
+#!/bin/bash
+
+set -e
+
+if [ -z "$1" ]; then
+	interface=eth1
+else
+	interface="$1"
+	shift
+fi
+
+if [ "$interface" != "eth0" ] && [ "$interface" != "eth1" ] && [ "$interface" != "enp0s8" ] && [ "$interface" != "ens33" ]; then
+	echo "Unexpected interface name '$interface'" >&2
+	exit 1
+fi
+
+file=/etc/network/interfaces
+lead='## BEGIN MCASTROUTE'
+tail='## END MCASTROUTE'
+route="up route add -net 224.0.0.0/4 dev $interface"
+
+# Remove the marked block.
+echo "Installing multicast route via $interface"
+sed -ie "/^$lead$/,/^$tail$/d" $file
+
+
+# Add it back at the end.
+cat <<EOF >>$file
+$lead
+$route
+$tail
+EOF
+
+# Install mDNS and avahi.
+apk add -U avahi avahi-compat-libdns_sd dbus
+rc-update add avahi-daemon
+rc-service -N avahi-daemon start
+
+echo "Forcing avahi-daemon to use $interface"
+sed -ie "s/^#\(allow-interfaces=\)eth0/\1$interface/" /etc/avahi/avahi-daemon.conf
+echo "Disabling IPv6 for avahi-daemon"
+sed -ie "s/^\(use-ipv6=\).*/\1no/" /etc/avahi/avahi-daemon.conf
+
+echo "Restarting networking"
+rc-service networking restart
+echo "Restarting avahi-daemon"
+rc-service avahi-daemon restart

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+rand=$RANDOM
+
+docker rm -f redis-${rand} || true
+docker run -d --name redis-${rand} \
+  -v redis-${rand}:/data \
+  --volume-driver=storageos \
+  redis redis-server --appendonly yes
+
+docker run -i --rm --link redis-${rand}:redis clue/redis-benchmark -t get,set
+
+docker rm -f redis-${rand}
