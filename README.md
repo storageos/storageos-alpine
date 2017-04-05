@@ -5,8 +5,13 @@ Vagrant setup for running StorageOS (plugin) on Alpine Linux.
 # Running
 
 ```
+# Create the VMs.
+
 $ vagrant up
 ...time passes...
+
+# Optional check for a working Consul cluster.
+
 $ vagrant provision --provision-with consul-rv
 ==> s-1: Running provisioner: consul-rv (shell)...
     s-1: Running: script: consul-rv
@@ -20,6 +25,8 @@ $ vagrant provision --provision-with consul-rv
     s-3: Running: script: consul-rv
 ==> s-3: 	leader_addr = 172.28.128.29:8300
 ==> s-3: Consul cluster created
+
+# Install the plugin now Consul is present.
 
 $ vagrant provision --provision-with storageos
 ==> s-1: Running provisioner: storageos (shell)...
