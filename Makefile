@@ -6,8 +6,13 @@ all:
 	echo "No default target" >&2
 	exit 1
 
+rebuild: destroy up provision
+
 up:
 	vagrant up
+
+destroy:
+	vagrant destroy -f
 
 provision:
 	$(VPROV) consul-rv
