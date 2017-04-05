@@ -10,8 +10,7 @@ else
 fi
 
 plugin=storageos/plugin
-default_int=$(ip -4 route list 0/0 | perl -ne 'print "$1\n" if m/dev (\w+)\s*/;')
-ip=$(ip -4 a show dev "$default_int" | perl -ne 'print "$1\n" if m!^\s+inet ([^/]+)/(\d+) (?:brd|scope)!;')
+ip=$(avahi-resolve-host-name -4 "$(hostname -s).local" | cut -f2)
 
 # Don't recreate dir if it exists.  Consul will still have old id registered so
 # it needs to re-use same config for each run.

@@ -39,12 +39,20 @@ Vagrant.configure("2") do |config|
   # Stage 1 - pre-requisites
   config.vm.provision "mcastroute", type: "shell", name: "install mcastroute", path: "#{scripts}/alpine-install-mcastroute", args: "eth1"
   config.vm.provision "docker", type: "shell", name: "install docker", path: "#{scripts}/alpine-install-docker"
-  config.vm.provision "utils", type: "shell", name: "install test dependencies", path: "#{scripts}/install-serverspec"
+  # config.vm.provision "utils", type: "shell", name: "install test dependencies", path: "#{scripts}/install-serverspec"
   config.vm.provision "consul", type: "shell", name: "start consul", path: "#{scripts}/run-consul", args: hostnames
   # config.vm.provision "consul", type: "shell", name: "start consul", path: "#{scripts}/run-consul-single"
   config.vm.provision "stcli", type: "shell", name: "install stcli", path: "#{scripts}/install-stcli"
 
-  config.vm.provision "storageos", run: "never", type: "shell", name: "start storageos", path: "#{scripts}/run-storageos-plugin", args: version
+  config.vm.provision "consul-rv", type: "shell", run: "never" do |s|
+    s.name = "consul-rv"
+    s.path = "#{scripts}/consul-rv"
+  end
+  config.vm.provision "storageos", type: "shell", run: "never" do |s|
+    s.name = "storageos"
+    s.path = "#{scripts}/run-storageos-plugin"
+    s.args = version
+  end
 
   # config.vm.provision :serverspec, run: "never" do |spec|
   #   spec.pattern = '**/*_spec.rb'

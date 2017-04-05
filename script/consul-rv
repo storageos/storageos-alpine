@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# Check for consul cluster creation.
+
+set -e -u
+
+retries=10
+retry=1
+delay=3
+
+function consul_up() {
+    if docker exec consul consul info | egrep -s 'leader_addr = [0-9]'; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+
+success=0
+
+while [ $retry -le $retries ]; do
+    if consul_up; then
+        echo "Consul cluster created"
+        success=1
+        break
+    else
+        echo "Consul cluster not seen (retry %s)"
+        sleep $delay
+    fi
+done
+
+if [ $success -eq 0 ]; then
+    echo "Consul cluster not started" >&2
+    exit 1
+fi
+
+exit 0
