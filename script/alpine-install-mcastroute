@@ -21,7 +21,7 @@ route="up route add -net 224.0.0.0/4 dev $interface"
 
 # Remove the marked block.
 echo "Installing multicast route via $interface"
-sed -ie "/^$lead$/,/^$tail$/d" $file
+sed -i -e "/^$lead$/,/^$tail$/d" $file
 
 
 # Add it back at the end.
@@ -37,9 +37,9 @@ rc-update add avahi-daemon
 rc-service -N avahi-daemon start
 
 echo "Forcing avahi-daemon to use $interface"
-sed -ie "s/^#\(allow-interfaces=\)eth0/\1$interface/" /etc/avahi/avahi-daemon.conf
+sed -i -e "s/^#\(allow-interfaces=\)eth0/\1$interface/" /etc/avahi/avahi-daemon.conf
 echo "Disabling IPv6 for avahi-daemon"
-sed -ie "s/^\(use-ipv6=\).*/\1no/" /etc/avahi/avahi-daemon.conf
+sed -i -e "s/^\(use-ipv6=\).*/\1no/" /etc/avahi/avahi-daemon.conf
 
 echo "Restarting networking"
 rc-service networking restart
