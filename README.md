@@ -2,7 +2,28 @@
 
 Vagrant setup for running StorageOS (plugin) on Alpine Linux.
 
-# Running
+# Run using `make`
+
+```
+# Bring up the VMs but don't install the plugin.
+$ make up
+
+# Install the plugin into VMs that are already up.
+$ make provision
+
+# Safely reload the plugin, stopping Docker to make sure the old
+# one has gone away. This is not to test the user upgrade experience,
+# but to make testing easier.
+$ make refresh-plugin
+
+# Destroy VMs.
+$ make destroy
+
+# Restart from scratch and provision VMs with the plugin.
+# make rebuild
+```
+
+# Running directly
 
 ```
 # Create the VMs.
