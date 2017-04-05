@@ -5,7 +5,7 @@
 require "./lib/random.rb"
 include Randomize
 
-version = (ENV['VERSION'] || '0.7.1')
+version = (ENV['VERSION'] || 'latest')
 
 nodes = 3
 scripts = "script"
