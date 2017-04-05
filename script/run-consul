@@ -5,7 +5,6 @@ set -e
 cluster_hostnames=("$@")
 num_nodes=${#cluster_hostnames[@]}
 
-apk add perl
 ip=$(avahi-resolve-host-name -4 "$(hostname -s).local" | cut -f2)
 leader_ip=$(avahi-resolve-host-name -4 "${cluster_hostnames[0]}.local" | cut -f2)
 
