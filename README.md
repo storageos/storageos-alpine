@@ -1,8 +1,20 @@
-# andrelucas/storageos-alpine
+# storageos-alpine Vagrant setup
 
-Vagrant setup for running StorageOS (plugin) on Alpine Linux.
+A simple Vagrant setup for running StorageOS (plugin) on Alpine Linux.
 
-Using the `vagrant-alpine` plugin and box provided by [matt maier](https://github.com/maier).
+Makes use of the `vagrant-alpine` plugin and box kindly provided by [Matt Maier](https://github.com/maier). Matt's box runs Alpine 3.4 on Virtualbox.
+
+I'm looking to upgrade to Alpine 3.5 and provide VMware desktop and KVM machines as well. When I get to it.
+
+# Pre-requisites
+
+- [Vagrant](https://www.vagrantup.com/) 1.9.3.
+
+    1.8 versions may well work, I've not tested them. Earlier 1.9.x series versions have a problem with provisioning that means we can't conditionally run certain provisioners in a specific order.
+
+- [Virtualbox](https://www.virtualbox.org/wiki/Downloads)
+
+    I'm not aware of any specific version, though the current version would be a safe bet. ATTOW that's 5.1.18, which works fine with Vagrant 1.9.3
 
 # Run using `make`
 
