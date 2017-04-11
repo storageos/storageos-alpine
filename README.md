@@ -2,6 +2,8 @@
 
 Vagrant setup for running StorageOS (plugin) on Alpine Linux.
 
+Using the `vagrant-alpine` plugin and box provided by [matt maier](https://github.com/maier).
+
 # Run using `make`
 
 ```
