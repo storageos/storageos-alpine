@@ -15,7 +15,7 @@ nameserver 8.8.8.8
 EOF
 
     apk add -U dhcpcd
-    service networking restart
+    rc-service -q networking restart
 fi
 
 echo "Updating apk cache"

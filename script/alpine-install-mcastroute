@@ -33,8 +33,8 @@ EOF
 
 # Install mDNS and avahi.
 apk add avahi avahi-compat-libdns_sd avahi-tools dbus
-rc-update add avahi-daemon
-rc-service -N avahi-daemon start
+rc-update -q add avahi-daemon
+rc-service -q -N avahi-daemon start
 
 echo "Forcing avahi-daemon to use $interface"
 sed -i -e "s/^#\(allow-interfaces=\)eth0/\1$interface/" /etc/avahi/avahi-daemon.conf
@@ -42,6 +42,6 @@ echo "Disabling IPv6 for avahi-daemon"
 sed -i -e "s/^\(use-ipv6=\).*/\1no/" /etc/avahi/avahi-daemon.conf
 
 echo "Restarting networking"
-rc-service networking restart
+rc-service -q networking restart
 echo "Restarting avahi-daemon"
-rc-service avahi-daemon restart
+rc-service -q avahi-daemon restart
