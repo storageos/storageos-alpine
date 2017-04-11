@@ -24,6 +24,8 @@ provision:
 	$(VPROV) storageos
 	$(VPROV) storageos-check
 
+restart: up consul provision
+
 refresh-plugin: remove-plugin consul provision
 
 remove-plugin:
