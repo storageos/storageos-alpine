@@ -54,6 +54,11 @@ Vagrant.configure("2") do |config|
     s.args = version
   end
 
+  config.vm.provision "storageos-check", type: "shell", run: "never" do |s|
+    s.name = "storageos-check"
+    s.path = "#{scripts}/check-storageos"
+  end
+
   config.vm.provision "storageos-remove", type: "shell", run: "never" do |s|
     s.name = "storageos"
     s.path = "#{scripts}/alpine-remove-storageos-plugin"

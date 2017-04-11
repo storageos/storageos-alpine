@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if stcli version >/dev/null; then
+    echo OK
+else
+    echo FAIL >&2
+fi

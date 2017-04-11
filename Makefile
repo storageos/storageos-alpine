@@ -22,6 +22,7 @@ destroy:
 provision:
 	$(VPROV) consul-rv
 	$(VPROV) storageos
+	$(VPROV) storageos-check
 
 refresh-plugin: remove-plugin consul provision
 
