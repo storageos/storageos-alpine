@@ -12,7 +12,7 @@ cat <<EOF >$stbin
 user=${STORAGEOS_USERNAME:-storageos}
 pass=${STORAGEOS_PASSWORD:-storageos}
 host="$ip"
-exec docker run -ti andrelucas/stcli:latest -u \$user -p \$pass -H \$host \$*
+exec docker run andrelucas/stcli:latest -u \$user -p \$pass -H \$host \$*
 EOF
 chown root:root $stbin
 chmod 0755 $stbin
