@@ -2,9 +2,7 @@
 VAGRANT	= vagrant
 VPROV	= $(VAGRANT) provision --provision-with
 
-all:
-	echo "No default target" >&2
-	exit 1
+all: up provision
 
 rebuild: destroy up provision
 
