@@ -23,8 +23,10 @@ provision:
 	$(VPROV) consul-rv
 	$(VPROV) storageos
 
-refresh-plugin:
+refresh-plugin: remove-plugin consul provision
+
+remove-plugin:
 	$(VPROV) storageos-remove
+
+consul:
 	$(VPROV) consul
-	$(VPROV) consul-rv
-	$(VPROV) storageos
