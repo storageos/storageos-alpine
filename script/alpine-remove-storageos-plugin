@@ -4,5 +4,5 @@
 
 set -e -u
 
-docker plugin rm -f storageos
+docker plugin rm -f storageos || true
 service docker restart

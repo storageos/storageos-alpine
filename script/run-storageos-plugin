@@ -16,7 +16,7 @@ ip=$(avahi-resolve-host-name -4 "$(hostname -s).local" | cut -f2)
 # it needs to re-use same config for each run.
 # shellcheck disable=SC2043
 for dir in /var/lib/storageos; do
-  [ -d $dir ] || mkdir $dir
+  [ -d $dir ] || mkdir -p $dir
 done
 
 # TODO: Move this to controlplane startup

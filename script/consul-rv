@@ -25,7 +25,7 @@ while [ $retry -le $retries ]; do
         success=1
         break
     else
-        echo "Consul cluster not seen (retry %s)"
+        echo "Consul cluster not seen (retry $retry)"
         sleep $delay
     fi
 done
