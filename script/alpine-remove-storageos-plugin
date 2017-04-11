@@ -4,5 +4,9 @@
 
 set -e -u
 
+echo "Unconditionally removing storageos plugin"
 docker plugin rm -f storageos || true
-service docker restart
+
+# Ideally this would not be necessary.
+echo "Restarting Docker host"
+rc-service -q docker restart

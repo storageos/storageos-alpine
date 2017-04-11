@@ -16,12 +16,13 @@ function consul_up() {
     fi
 }
 
-
 success=0
+
+echo "Checking for consul cluster"
 
 while [ $retry -le $retries ]; do
     if consul_up; then
-        echo "Consul cluster created"
+        echo "Consul cluster present"
         success=1
         break
     else
