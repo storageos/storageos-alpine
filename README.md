@@ -26,6 +26,9 @@ $ make destroy
 # Running directly
 
 ```
+# Install the Vagrant plugin for Alpine.
+$ vagrant plugin install vagrant-alpine
+
 # Create the VMs.
 
 $ vagrant up

@@ -8,8 +8,13 @@ all:
 
 rebuild: destroy up provision
 
-up:
+up: plugin
 	vagrant up
+
+plugin:
+	if ! vagrant plugin list | egrep '^vagrant-alpine '; then \
+		vagrant plugin install vagrant-alpine; \
+	fi
 
 destroy:
 	vagrant destroy -f
