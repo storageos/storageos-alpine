@@ -20,7 +20,7 @@ for dir in /var/lib/storageos; do
 done
 
 # TODO: Move this to controlplane startup
-modprobe nbd
+modprobe nbd nbds_max=1024 max_part=15
 modprobe fuse
 
 echo "starting storageos plugin on $ip"
