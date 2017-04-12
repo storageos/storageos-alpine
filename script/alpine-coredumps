@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# Set up to generate core dumps.
+
+set -u -e
+
+# Set /etc/security/ limit to unlimited.
+coreconf=/etc/security/limit.d/core.conf
+mkdir -p "$(dirname $coreconf)"
+test -f $coreconf || echo "Writing $coreconf"
+cat <<EOF >$coreconf
+# Generate core dumps of any size. Not a production configuration!
+*               soft    core            unlimited
+*               hard    core            unlimited
+EOF
+
+# Set ulimit in shell startup.
+prof_ulimit=/etc/profile.d/ulimit.sh
+test -f $prof_ulimit || echo "Writing $prof_ulimit"
+cat <<EOF >$prof_ulimit
+# Enable unlimited core dump size.
+ulimit -c unlimited
+EOF
+
+# Create a dump dir.
+crashdir=/var/crash
+test -d $crashdir || echo "Installing $crashdir"
+install -d -o root -g wheel -m 0775 $crashdir
+
+# Create a script in /sbin to compress the corefile.
+# It has to live in /sbin or grsec won't allow it.
+core_sh=/sbin/core.sh
+test -f $core_sh || echo "Installing $core_sh"
+cat <<EOF >$core_sh
+#!/bin/sh
+exec /bin/gzip -c -1 >"\$1".gz
+EOF
+chown root:root $core_sh
+chmod 0755 $core_sh
+
+# Set the core pattern via sysctl, to call our script with
+# the magic filename to use. The script will append the compression
+# suffix if required.
+sc_core=/etc/sysctl.d/core_pattern
+test -f $sc_core || echo "Writing $sc_core"
+cat <<EOF >$sc_core
+kernel.core_pattern = |$core_sh /var/crash/core.%e.%p.%u@%h.%t
+EOF
+
+# Activate the sysctl settings immediately.
+sysctl -p $sc_core

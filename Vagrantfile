@@ -37,6 +37,7 @@ Vagrant.configure("2") do |config|
 
   # Stage 0 - fix box.
   config.vm.provision "alpinebox", type: "shell", name: "fixup box", path: "#{scripts}/alpine-box-fixup"
+  config.vm.provision "generate-core", type: "shell", name: "generate coredump files", path: "#{scripts}/alpine-coredumps"
 
   # Stage 1 - pre-requisites
   config.vm.provision "mcastroute", type: "shell", name: "install mcastroute", path: "#{scripts}/alpine-install-mcastroute", args: "eth1"
