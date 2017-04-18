@@ -9,7 +9,7 @@ else
 	shift
 fi
 
-plugin=store/storageos/plugin
+plugin=storageos/plugin
 ip=$(avahi-resolve-host-name -4 "$(hostname -s).local" | cut -f2)
 
 # Don't recreate dir if it exists.  Consul will still have old id registered so
