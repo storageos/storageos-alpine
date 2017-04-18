@@ -86,6 +86,19 @@ I'm looking to upgrade to Alpine 3.5 and provide VMware desktop and KVM machines
         s-2: Running: script: storageos
     ...etc...
 
+# Test it's working. Anything other than three OKs is bad.
+
+    $ vagrant provision --provision-with storageos-check
+    ==> s-1: Running provisioner: storageos-check (shell)...
+        s-1: Running: script: storageos-check
+    ==> s-1: OK
+    ==> s-2: Running provisioner: storageos-check (shell)...
+        s-2: Running: script: storageos-check
+    ==> s-2: OK
+    ==> s-3: Running provisioner: storageos-check (shell)...
+        s-3: Running: script: storageos-check
+    ==> s-3: OK
+
 # Hosts have Vagrant names s-1, s-2, ...
 
     $ vagrant ssh s-1
