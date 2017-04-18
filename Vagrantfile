@@ -7,7 +7,7 @@ include Randomize
 
 Vagrant.require_version ">= 1.9.3"
 
-version = (ENV['VERSION'] || '0.7.5')
+version = (ENV['VERSION'] || '0.7.6')
 
 nodes = 3
 scripts = "script"

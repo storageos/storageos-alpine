@@ -3,13 +3,13 @@
 set -e
 
 if [ -z "$1" ]; then
-	version=latest
+	version=0.7.6
 else
 	version="$1"
 	shift
 fi
 
-plugin=storageos/plugin
+plugin=store/storageos/plugin
 ip=$(avahi-resolve-host-name -4 "$(hostname -s).local" | cut -f2)
 
 # Don't recreate dir if it exists.  Consul will still have old id registered so
