@@ -42,6 +42,7 @@ Vagrant.configure("2") do |config|
   # Stage 1 - pre-requisites
   config.vm.provision "mcastroute", type: "shell", name: "install mcastroute", path: "#{scripts}/alpine-install-mcastroute", args: "eth1"
   config.vm.provision "docker", type: "shell", name: "install docker", path: "#{scripts}/alpine-install-docker"
+  config.vm.provision "docker-auth", type: "shell", name: "install docker", path: "#{scripts}/install-docker-auth"
   # config.vm.provision "utils", type: "shell", name: "install test dependencies", path: "#{scripts}/install-serverspec"
   config.vm.provision "consul", type: "shell", name: "start consul", path: "#{scripts}/run-consul", args: hostnames
   # config.vm.provision "consul", type: "shell", name: "start consul", path: "#{scripts}/run-consul-single"

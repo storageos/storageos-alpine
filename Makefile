@@ -18,6 +18,7 @@ destroy:
 	vagrant destroy -f
 
 provision:
+	test -f script/install-docker-auth && $(VPROV) docker-auth
 	$(VPROV) consul-rv
 	$(VPROV) storageos
 	$(VPROV) storageos-check

@@ -1,2 +1,3 @@
 .vagrant
 name_rand.txt
+script/install-docker-auth
