@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+# Install Docker.
+if [ ! -f /usr/bin/docker ]; then
+  comrepo="http://dl-cdn.alpinelinux.org/alpine/edge/community"
+  if ! egrep -s "^$comrepo$" /etc/apk/repositories; then
+      echo $comrepo >> /etc/apk/repositories
+  fi
+  # Have to to an update here, we've added a repo.
+  apk update
+  apk add docker
+  rc-update -q add docker
+  rc-service -q -N docker start
+fi
+
+sudo apk add shadow
+usermod -a -G docker vagrant
