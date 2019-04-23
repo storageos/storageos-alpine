@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Check if /dev/sdb is partitioned
+parted --script /dev/sdb print
+parted_exit_code="$?"
+
+set -e
+
+if [ ! $parted_exit_code -eq '0' ]; then
+  # If not, create partition
+  parted /dev/sdb mklabel gpt
+  parted /dev/sdb mkpart primary ext4 0% 100%
+
+  mkfs.ext4 -L datapartition /dev/sdb1
+fi
+
+if [ "$(cat <(mount | grep /dev/sdb1 | wc -l))" -eq '0' ]; then
+  mkdir -p /var/lib/storageos
+  mount /dev/sdb1 /var/lib/storageos
+  mount --make-shared /var/lib/storageos
+fi

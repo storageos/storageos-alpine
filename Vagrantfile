@@ -17,20 +17,33 @@ vmnames = nodes.times.collect { |n| "s-#{n+1}" }
 hostnames = nodes.times.collect { |n| "storageos-#{n + 1}-#{random}" }
 vm_to_host = Hash[vmnames.zip(hostnames)]
 
+memory = 2048
+cpus = 2
+extra_disk_size = 50 * 1024 # 50 GB
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "maier/alpine-3.4-x86_64"
+  config.vm.box = "generic/alpine39"
   config.vm.network "private_network", type: "dhcp"
+
+  config.vbguest.auto_update = false
 
   vmnames.each do |vmname|
     config.vm.define vmname do |node|
       node.vm.hostname = vm_to_host[vmname]
-    end
-  end
 
-  config.vm.provider "virtualbox" do |v|
-    v.memory = 2048
-    v.cpus = 2
+      node.vm.provider :virtualbox do |v|
+        v.memory = memory
+        v.cpus = cpus
+
+        #v.customize ['storagectl', :id, '--name',  'SATA Controller', '--add', 'sata',  '--controller', 'IntelAhci', '--portcount', 4]
+
+        file_to_disk = "./.vagrant/#{vmname}.vdi"
+        unless File.exist?(file_to_disk)
+          v.customize ['createhd', '--filename', file_to_disk, '--size', extra_disk_size]
+        end
+        v.customize ['storageattach', :id, '--storagectl', 'IDE Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
+      end
+    end
   end
 
   config.vm.synced_folder '.', '/vagrant', disabled: true
@@ -42,6 +55,7 @@ Vagrant.configure("2") do |config|
   # Stage 1 - pre-requisites
   config.vm.provision "mcastroute", type: "shell", name: "install mcastroute", path: "#{scripts}/alpine-install-mcastroute", args: "eth1"
   config.vm.provision "docker", type: "shell", name: "install docker", path: "#{scripts}/alpine-install-docker"
+  config.vm.provision "parted", type: "shell", name: "install parted", path: "#{scripts}/alpine-install-parted"
   # Optional Docker authentication.
   if File.exist?("#{scripts}/install-docker-auth")
     config.vm.provision "docker-auth", type: "shell", name: "install docker", path: "#{scripts}/install-docker-auth"
@@ -51,6 +65,7 @@ Vagrant.configure("2") do |config|
   # config.vm.provision "consul", type: "shell", name: "start consul", path: "#{scripts}/run-consul-single"
   config.vm.provision "stcli", type: "shell", name: "install stcli", path: "#{scripts}/alpine-install-stcli"
 
+  config.vm.provision "datapartition", type: "shell", name: "setup data partition", path: "#{scripts}/run-partition-setup-and-mount"
 
   config.vm.provision "consul-rv", type: "shell", run: "never" do |s|
     s.name = "consul-rv"
@@ -58,7 +73,7 @@ Vagrant.configure("2") do |config|
   end
   config.vm.provision "storageos", type: "shell", run: "never" do |s|
     s.name = "storageos"
-    s.path = "#{scripts}/run-storageos-plugin"
+    s.path = "#{scripts}/run-storageos-server"
     s.args = version
   end
 

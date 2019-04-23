@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+# Install Parted.
+if [ ! -f /usr/sbin/parted ]; then
+  apk add parted
+fi

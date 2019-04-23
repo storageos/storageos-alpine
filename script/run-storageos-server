@@ -42,13 +42,15 @@ modprobe fuse
 echo "starting storageos on $ip"
 docker rm -f storageos 2>/dev/null || true
 docker run -d --name storageos \
-	-e HOSTNAME \
+	-e HOSTNAME=${hostname} \
 	-e ADVERTISE_IP="${ip}" \
+  -e JOIN=127.0.0.1 \
 	--net=host \
 	--pid=host \
 	--privileged \
 	--cap-add SYS_ADMIN \
-  	--device /dev/fuse \
-	-v /var/lib/storageos:/var/lib/storageos:rshared \
+  --device /dev/fuse \
+  --mount type=bind,source=/var/lib/storageos,target=/var/lib/storageos,bind-propagation=rshared \
 	-v /run/docker/plugins:/run/docker/plugins \
+  -v /sys:/sys \
 	"$imgname:$version" server
